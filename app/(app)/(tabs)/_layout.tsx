@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { router } from 'expo-router';
-
+import { View } from 'react-native';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -14,9 +13,11 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-      }}>
+        tabBarShowLabel: false,
+        tabBarStyle: { height: 60 }
+      }} >
       <Tabs.Screen
-        name="index"
+        name="wallet"
         options={{
           title: 'Wallet',
           tabBarIcon: ({ color, focused }) => (
@@ -29,7 +30,7 @@ export default function TabLayout() {
         options={{
           title: 'Transactions',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'list' : 'list-outline'} color={color} />
+            <TabBarIcon name={focused ? 'time' : 'time-outline'} color={color} />
           ),
         }}
       />
@@ -38,20 +39,16 @@ export default function TabLayout() {
         options={{
           title: 'Modal',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'add-circle' : 'add-circle-outline'} color={color} />
+            <View style={{ backgroundColor: '#6B96FE', borderRadius: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36 }}>
+              <TabBarIcon name={focused ? 'swap-vertical' : 'swap-vertical-outline'} color={'#fff'} />
+            </View>
           ),
         }}
-        // listeners={() => ({
-        //   tabPress: (e) => {
-        //     e.preventDefault()
-        //     router.push("modal1")
-        //   },
-        // })}
       />
       <Tabs.Screen
         name="explore"
         options={{
-          title: 'Explore',
+          title: 'Wallet',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
           ),
@@ -66,6 +63,6 @@ export default function TabLayout() {
           ),
         }}
       />
-    </Tabs>
+    </ Tabs>
   );
 }
