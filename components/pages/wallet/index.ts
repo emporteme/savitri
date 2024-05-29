@@ -1,3 +1,4 @@
 import TabViews from './TabViews';
+import WalletList from './WalletList';
 
-export { TabViews }
+export { WalletList, TabViews }

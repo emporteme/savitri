@@ -1,12 +1,13 @@
 import { View, Text } from 'react-native'
 import React from 'react'
+import Wallet from './Wallet'
 
-const WalletList = () => {
-  return (
-    <View>
-      <Text>WalletList</Text>
-    </View>
-  )
+const WalletList: React.FC = () => {
+    return (
+        <>
+            <Wallet />
+        </>
+    )
 }
 
 export default WalletList
