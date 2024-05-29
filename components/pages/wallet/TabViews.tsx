@@ -5,11 +5,11 @@ import Assets from './Assets';
 import Tokens from './Tokens';
 
 const FirstRoute = () => (
-  <Assets />
+  <Tokens />
 );
 
 const SecondRoute = () => (
-  <Tokens />
+  <Assets />
 );
 
 const renderScene = SceneMap({

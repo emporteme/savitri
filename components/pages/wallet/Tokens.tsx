@@ -4,7 +4,7 @@ import React from 'react'
 const Tokens: React.FC = () => {
     return (
         <View>
-            <Text>:React.FC</Text>
+            <Text>Tokens</Text>
         </View>
     )
 }

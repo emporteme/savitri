@@ -4,7 +4,7 @@ import React from 'react'
 const Assets: React.FC = () => {
     return (
         <View>
-            <Text>Assets</Text>
+            <Text>Asset '''s</Text>
         </View>
     )
 }
