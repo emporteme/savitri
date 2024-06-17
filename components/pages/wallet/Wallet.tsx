@@ -50,7 +50,7 @@ const Wallet: React.FC = () => {
     const createEthereumWallet = async () => {
         try {
             const randomBytes = await Crypto.getRandomBytesAsync(32);
-            const privateKey = ethers.utils.hexlify(randomBytes);
+            const privateKey = ethers.hexlify(randomBytes);
             const wallet = new ethers.Wallet(privateKey);
 
             const newWallet = { type: 'Ethereum', publicKey: wallet.address, privateKey: wallet.privateKey };
