@@ -3,9 +3,11 @@ import { View, Text, Pressable, Alert, Button, FlatList } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as SecureStore from 'expo-secure-store';
 import elliptic, { eddsa as EdDSA } from 'elliptic';
+import { ethers } from 'ethers';
+import * as Crypto from 'expo-crypto';
 
 const Wallet: React.FC = () => {
-    const [wallets, setWallets] = useState<{ publicKey: string, privateKey: string }[]>([]);
+    const [wallets, setWallets] = useState<{ type: string, publicKey: string, privateKey: string }[]>([]);
     const ec = new EdDSA('ed25519');
 
     useEffect(() => {
@@ -16,12 +18,10 @@ const Wallet: React.FC = () => {
         const keys = await SecureStore.getItemAsync('wallets');
         if (keys) {
             setWallets(JSON.parse(keys));
-        } else {
-            createWallet();
         }
     };
 
-    const createWallet = async () => {
+    const createIkarusWallet = async () => {
         let secret: any;
 
         if (window.crypto && window.crypto.getRandomValues) {
@@ -39,7 +39,7 @@ const Wallet: React.FC = () => {
         const privateKeyHex = key.getSecret('hex');
         const publicKeyHex = key.getPublic('hex');
 
-        const newWallet = { publicKey: publicKeyHex, privateKey: privateKeyHex };
+        const newWallet = { type: 'Ikarus', publicKey: publicKeyHex, privateKey: privateKeyHex };
         const updatedWallets = [...wallets, newWallet];
         await SecureStore.setItemAsync('wallets', JSON.stringify(updatedWallets));
 
@@ -47,7 +47,25 @@ const Wallet: React.FC = () => {
         requestTokens(publicKeyHex);
     };
 
-    const requestTokens = async (publicKey: any) => {
+    const createEthereumWallet = async () => {
+        try {
+            const randomBytes = await Crypto.getRandomBytesAsync(32);
+            const privateKey = ethers.utils.hexlify(randomBytes);
+            const wallet = new ethers.Wallet(privateKey);
+
+            const newWallet = { type: 'Ethereum', publicKey: wallet.address, privateKey: wallet.privateKey };
+            const updatedWallets = [...wallets, newWallet];
+            await SecureStore.setItemAsync('wallets', JSON.stringify(updatedWallets));
+
+            setWallets(updatedWallets);
+            Alert.alert('Success', 'Ethereum wallet has been created.');
+        } catch (error) {
+            console.error('Error creating Ethereum wallet:', error);
+            Alert.alert('Error', 'Failed to create Ethereum wallet.');
+        }
+    };
+
+    const requestTokens = async (publicKey: string) => {
         try {
             const url = `https://masternode-test.ikarusway.com/wallet/${publicKey}`;
             const response = await fetch(url);
@@ -65,12 +83,12 @@ const Wallet: React.FC = () => {
         Alert.alert('Public Key', publicKey);
     };
 
-    const renderWalletItem = ({ item }: { item: { publicKey: string, privateKey: string } }) => (
+    const renderWalletItem = ({ item }: { item: { type: string, publicKey: string, privateKey: string } }) => (
         <View style={{ display: 'flex', flexDirection: 'column', padding: 16, borderWidth: 1, borderColor: 'gray', borderRadius: 8, marginBottom: 16 }}>
             <View style={{ paddingBottom: 16, borderBottomWidth: 1, borderColor: 'gray', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 16 }}>
                     <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'violet' }}></View>
-                    <Text style={{ fontWeight: '500', fontSize: 18 }}>Account</Text>
+                    <Text style={{ fontWeight: '500', fontSize: 18 }}>{item.type} Wallet</Text>
                 </View>
                 <View>
                     <Ionicons name="chevron-down-outline" size={24} color="black" />
@@ -96,7 +114,8 @@ const Wallet: React.FC = () => {
 
     return (
         <View style={{ padding: 16, height: '50%' }}>
-            <Button title="Create Wallet" onPress={createWallet} />
+            <Button title="Create Ikarus Wallet" onPress={createIkarusWallet} />
+            <Button title="Create Ethereum Wallet" onPress={createEthereumWallet} />
             <FlatList
                 data={wallets}
                 renderItem={renderWalletItem}
