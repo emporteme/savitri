@@ -42,7 +42,8 @@
     "react-native-screens": "3.31.1",
     "react-native-tab-view": "^3.5.2",
     "react-native-web": "~0.19.10",
-    "expo-crypto": "~13.0.2"
+    "expo-crypto": "~13.0.2",
+    "expo-location": "~17.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
