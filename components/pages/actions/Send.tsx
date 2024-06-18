@@ -18,9 +18,8 @@ function fromHex(hex: string) {
 function getRandomString(n: number): string {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
-    const charactersLength = characters.length;
     for (let i = 0; i < n; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return result;
 }
@@ -39,7 +38,8 @@ export default function App() {
                 let loadedPrivateKey;
 
                 if (!storedPrivateKey) {
-                    const keyPair = ec.genKeyPair();
+                    const randomSecret = elliptic.utils.randomBytes(32);
+                    const keyPair = ec.keyFromSecret(randomSecret);
                     loadedPrivateKey = toHex(keyPair.getSecret());
                     const publicKeyHex = toHex(keyPair.getPublic());
                     await SecureStore.setItemAsync('privateKey', loadedPrivateKey);
@@ -151,6 +151,10 @@ export default function App() {
 
     const signLocation = async () => {
         try {
+            if (!privateKey) {
+                throw new Error('Private key is not available');
+            }
+
             const { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 console.error('Permission to access location was denied');
