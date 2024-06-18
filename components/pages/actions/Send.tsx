@@ -24,7 +24,7 @@ function getRandomString(n: number): string {
     return result;
 }
 
-export default function App() {
+export default function AppSend() {
     const [privateKey, setPrivateKey] = useState<string | null>(null);
     const [publicKey, setPublicKey] = useState<string | null>(null);
     const [devPubKey, setDevPubKey] = useState<string | null>(null);

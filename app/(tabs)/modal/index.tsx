@@ -3,23 +3,27 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useMemo } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import AppSend from '@/components/pages/actions/Send';
 
 export default function Modal() {
     const snapPoints = useMemo(() => ['12.5%', '25%', '50%', '70%'], []);
 
     return (
-        <GestureHandlerRootView>
-            <View style={styles.container}>
-                <BottomSheet index={1} snapPoints={snapPoints}>
-                    <View style={styles.contentContainer}>
-                        <Text style={styles.containerHeadline}>Send</Text>
-                    </View>
-                    <View style={styles.contentContainer}>
-                        <Text style={styles.containerHeadline}>Receive</Text>
-                    </View>
-                </BottomSheet>
-            </View>
-        </GestureHandlerRootView>
+        <View style={{ flex: 1 }}>
+            <AppSend />
+            <GestureHandlerRootView>
+                <View style={styles.container}>
+                    <BottomSheet index={1} snapPoints={snapPoints}>
+                        <View style={styles.contentContainer}>
+                            <Text style={styles.containerHeadline}>Send</Text>
+                        </View>
+                        <View style={styles.contentContainer}>
+                            <Text style={styles.containerHeadline}>Receive</Text>
+                        </View>
+                    </BottomSheet>
+                </View>
+            </GestureHandlerRootView>
+        </View>
     );
 }
 
