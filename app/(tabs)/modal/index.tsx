@@ -1,24 +1,31 @@
+import { useState, useMemo } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
-import { useMemo } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
 import AppSend from '@/components/pages/actions/Send';
 
 export default function Modal() {
+    const [activeComponent, setActiveComponent] = useState('Send');
     const snapPoints = useMemo(() => ['12.5%', '25%', '50%', '70%'], []);
+
+    const handleSendPress = () => setActiveComponent('Send');
+    const handleReceivePress = () => setActiveComponent('Receive');
 
     return (
         <View style={{ flex: 1 }}>
-            <AppSend />
+            {activeComponent === 'Send' && <AppSend />}
             <GestureHandlerRootView>
                 <View style={styles.container}>
                     <BottomSheet index={1} snapPoints={snapPoints}>
                         <View style={styles.contentContainer}>
-                            <Text style={styles.containerHeadline}>Send</Text>
+                            <TouchableOpacity onPress={handleSendPress}>
+                                <Text style={styles.containerHeadline}>Send</Text>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.contentContainer}>
-                            <Text style={styles.containerHeadline}>Receive</Text>
+                            <TouchableOpacity onPress={handleReceivePress}>
+                                <Text style={styles.containerHeadline}>Receive</Text>
+                            </TouchableOpacity>
                         </View>
                     </BottomSheet>
                 </View>
@@ -31,10 +38,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     contentContainer: {
-        // flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 16,
@@ -48,5 +54,5 @@ const styles = StyleSheet.create({
         lineHeight: 21,
         fontWeight: '600',
         color: '#fff',
-    }
+    },
 });
