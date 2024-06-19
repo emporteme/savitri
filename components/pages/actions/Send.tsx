@@ -85,7 +85,7 @@ export default function AppSend() {
     }, [privateKey, isDevKeyRegistered, devPubKey]);
 
     const signDevkey = async (devpubkey: string, privateKey: string) => {
-        const API_URL = 'http://pool.prometeochain.io/node/get_from_ledger';
+        const API_URL = 'https://pool-test.ikarusway.com/node/get_from_ledger';
 
         try {
             const { status } = await Location.requestForegroundPermissionsAsync();
@@ -209,7 +209,7 @@ export default function AppSend() {
     };
 
     const sendToAPI = async (dataToSend: string) => {
-        const API_URL = 'http://pool.prometeochain.io/node/get_from_ledger';
+        const API_URL = 'https://pool-test.ikarusway.com/node/get_from_ledger';
 
         try {
             const response = await fetch(API_URL, {
@@ -289,16 +289,16 @@ export default function AppSend() {
                 throw new Error('Private or public key is not available');
             }
 
-            const API_URL = 'http://pool.prometeochain.io/node/get_from_ledger';
+            const API_URL = 'https://pool-test.ikarusway.com/node/get_from_ledger';
             const tokenTransferTx = {
                 tx: {
                     pubkey: publicKey,
                     company_id: 1,
-                    recipient: recipientAddress,
+                    reciever: recipientAddress,
                     amount: amount,
                     timestamp: Date.now() / 1000,
                 },
-                type: 'TRANSFER',
+                type: 'AA03',
             };
 
             const { signature, orderedData } = signData(tokenTransferTx.tx, privateKey);
@@ -313,7 +313,7 @@ export default function AppSend() {
 
             const sendToPool = {
                 tx,
-                type: 'TRANSFER'
+                type: 'AA03'
             };
 
             const stringify = JSON.stringify(sendToPool);
@@ -331,6 +331,43 @@ export default function AppSend() {
 
             if (!response.ok) {
                 throw new Error('Error sending tokens');
+            }
+
+            console.log('Tokens sent successfully');
+        } catch (error) {
+            console.error('Error sending tokens:', error);
+        }
+    };
+
+    const sendTokensTest = async () => {
+        try {
+            const API_URL = 'https://pool-test.ikarusway.com/node/get_from_ledger';
+            const tokenTransferTx = {
+                tx: {
+                    pubkey: "9fe78c523a22f83ae85d88174f93d763f302007a037293974c1f9a31806f0bb0",
+                    amount: 33,
+                    reciever: "34234234324234",
+                    timestamp: 1718783564.917,
+                    signature: "85f731fd003e9e75b3c1efed5dea3753ab39d8c9833001a0a4d50c2ae27aee14ed1a4705a820b9e773eff88d21db40e4fe7e1ce9955505c01892681dd05fdf0e"
+                },
+                type: "AA03"
+            };
+
+            const stringify = JSON.stringify(tokenTransferTx);
+            console.log('Response Testing FIRST:', stringify);
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: stringify
+            });
+
+            console.log('Response Testing:', response);
+
+            if (!response.ok) {
+                throw new Error('Error sending tokens TESTING');
             }
 
             console.log('Tokens sent successfully');
@@ -365,6 +402,7 @@ export default function AppSend() {
                 keyboardType="numeric"
             />
             <Button title="Send Tokens" onPress={handleSendTokens} />
+            <Button title="Test sending" onPress={() => sendTokensTest()} />
         </View>
     );
 }
@@ -376,6 +414,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 16,
+        gap: 12
     },
     input: {
         height: 40,
