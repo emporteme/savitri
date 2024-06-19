@@ -6,7 +6,7 @@ import AppSend from '@/components/pages/actions/Send';
 
 export default function Modal() {
     const [activeComponent, setActiveComponent] = useState('Send');
-    const snapPoints = useMemo(() => ['12.5%', '25%', '50%', '70%'], []);
+    const snapPoints = useMemo(() => ['30%', '60%', '100%'], []);
 
     const handleSendPress = () => setActiveComponent('Send');
     const handleReceivePress = () => setActiveComponent('Receive');
