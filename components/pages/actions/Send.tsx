@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
 import * as Location from 'expo-location';
 import elliptic, { eddsa as EdDSA } from 'elliptic';
 import { hexToUint8Array } from '@/components/utils';
@@ -333,7 +333,7 @@ export default function AppSend() {
                 throw new Error('Error sending tokens');
             }
 
-            console.log('Tokens sent successfully');
+            Alert.alert('Success', 'Tokens sent successfully');
         } catch (error) {
             console.error('Error sending tokens:', error);
         }
