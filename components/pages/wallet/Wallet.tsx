@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, Alert, Button, FlatList } from 'react-native';
+import { View, Text, Pressable, Alert, Button, FlatList, ScrollView } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as SecureStore from 'expo-secure-store';
 import elliptic, { eddsa as EdDSA } from 'elliptic';
@@ -113,7 +113,7 @@ const Wallet: React.FC = () => {
     );
 
     return (
-        <View style={{ padding: 16, height: '50%', gap: 12 }}>
+        <ScrollView style={{ padding: 16, height: '50%', gap: 12, display: 'flex', flexDirection: 'column' }}>
             <Button title="Create Ikarus Wallet" onPress={createIkarusWallet} />
             <Button title="Create Ethereum Wallet" onPress={createEthereumWallet} />
             <FlatList
@@ -121,7 +121,7 @@ const Wallet: React.FC = () => {
                 renderItem={renderWalletItem}
                 keyExtractor={(item, index) => index.toString()}
             />
-        </View>
+        </ScrollView>
     );
 };
 

@@ -4,12 +4,10 @@ import { WalletList, TabViews, Header } from '@/components/pages/wallet';
 
 export default function WalletScreen() {
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView style={{ padding: 16, gap: 16 }}>
-        <Header />
-        <WalletList />
-        <TabViews />
-      </ScrollView>
+    <View style={{ flex: 1, padding: 16, gap: 16 }}>
+      <Header />
+      <WalletList />
+      <TabViews />
     </View>
   );
 }
