@@ -113,7 +113,7 @@ const Wallet: React.FC = () => {
     );
 
     return (
-        <View style={{ padding: 16, height: '50%' }}>
+        <View style={{ padding: 16, height: '50%', gap: 12 }}>
             <Button title="Create Ikarus Wallet" onPress={createIkarusWallet} />
             <Button title="Create Ethereum Wallet" onPress={createEthereumWallet} />
             <FlatList
