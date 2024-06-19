@@ -387,7 +387,7 @@ export default function AppSend() {
 
     return (
         <View style={styles.container}>
-            <Text>Current Location: {JSON.stringify(location)}</Text>
+            {/* <Text>Current Location: {JSON.stringify(location)}</Text> */}
             <TextInput
                 style={styles.input}
                 placeholder="Recipient Address"
