@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as Location from 'expo-location';
 import elliptic, { eddsa as EdDSA } from 'elliptic';
 import { hexToUint8Array } from '@/components/utils';
@@ -30,6 +30,8 @@ export default function AppSend() {
     const [devPubKey, setDevPubKey] = useState<string | null>(null);
     const [isDevKeyRegistered, setIsDevKeyRegistered] = useState(false);
     const [location, setLocation] = useState<any>(null);
+    const [recipientAddress, setRecipientAddress] = useState<string>('');
+    const [amountToSend, setAmountToSend] = useState<string>('');
 
     useEffect(() => {
         const initializeApp = async () => {
@@ -57,7 +59,6 @@ export default function AppSend() {
                 setDevPubKey(devKey);
                 await SecureStore.setItemAsync('devPubKey', devKey);
 
-                // Request location permissions and set location
                 const { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
                     console.error('Permission to access location was denied');
@@ -75,12 +76,10 @@ export default function AppSend() {
 
     useEffect(() => {
         if (privateKey && devPubKey && !isDevKeyRegistered) {
-            signDevkey(devPubKey, privateKey); // Fix: Pass both devPubKey and privateKey as arguments
+            signDevkey(devPubKey, privateKey);
             setIsDevKeyRegistered(true);
         } else if (privateKey && devPubKey) {
             const intervalId = setInterval(signLocation, 10 * 1000);
-
-            // Clear interval on component unmount
             return () => clearInterval(intervalId);
         }
     }, [privateKey, isDevKeyRegistered, devPubKey]);
@@ -89,7 +88,6 @@ export default function AppSend() {
         const API_URL = 'http://pool.prometeochain.io/node/get_from_ledger';
 
         try {
-            // Get current location
             const { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 console.error('Permission to access location was denied');
@@ -281,19 +279,92 @@ export default function AppSend() {
                 result[key] = sortObjectKeys(obj[key]);
             });
             return result;
+        }
+        return obj;
+    };
+
+    const sendTokens = async (recipientAddress: string, amount: number) => {
+        try {
+            if (!privateKey || !publicKey) {
+                throw new Error('Private or public key is not available');
+            }
+
+            const API_URL = 'http://pool.prometeochain.io/node/get_from_ledger';
+            const tokenTransferTx = {
+                tx: {
+                    pubkey: publicKey,
+                    company_id: 1,
+                    recipient: recipientAddress,
+                    amount: amount,
+                    timestamp: Date.now() / 1000,
+                },
+                type: 'TRANSFER',
+            };
+
+            const { signature, orderedData } = signData(tokenTransferTx.tx, privateKey);
+            orderedData.signature = signature;
+            tokenTransferTx.tx = orderedData;
+
+            const tx = {
+                pubkey: publicKey,
+                ...orderedData,
+                signature
+            };
+
+            const sendToPool = {
+                tx,
+                type: 'TRANSFER'
+            };
+
+            const stringify = JSON.stringify(sendToPool);
+            console.log('Stringified data:', stringify);
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: stringify
+            });
+
+            console.log('Response:', response);
+
+            if (!response.ok) {
+                throw new Error('Error sending tokens');
+            }
+
+            console.log('Tokens sent successfully');
+        } catch (error) {
+            console.error('Error sending tokens:', error);
+        }
+    };
+
+    const handleSendTokens = () => {
+        const amount = parseFloat(amountToSend);
+        if (recipientAddress && !isNaN(amount) && amount > 0) {
+            sendTokens(recipientAddress, amount);
         } else {
-            return obj;
+            console.error('Invalid recipient address or amount');
         }
     };
 
     return (
         <View style={styles.container}>
-            <Text>Open up App.tsx to start working on your app!</Text>
-            {location && (
-                <Text>
-                    Location: {location.coords.latitude}, {location.coords.longitude}
-                </Text>
-            )}
+            <Text>Current Location: {JSON.stringify(location)}</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Recipient Address"
+                value={recipientAddress}
+                onChangeText={setRecipientAddress}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Amount to Send"
+                value={amountToSend}
+                onChangeText={setAmountToSend}
+                keyboardType="numeric"
+            />
+            <Button title="Send Tokens" onPress={handleSendTokens} />
         </View>
     );
 }
@@ -304,5 +375,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 16,
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 12,
+        width: '100%',
+        paddingHorizontal: 8,
     },
 });
