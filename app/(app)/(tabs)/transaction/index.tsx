@@ -2,12 +2,11 @@ import React, {useEffect} from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import {Services} from "@/services/Services";
 
-
 const Transaction: React.FC = () => {
     const [transactions, setTransactions]:any = React.useState();
     useEffect(()=>{
         const services =new Services()
-        const data=services.GetResource("data/tx/pk/36e176ad58fad39b0b0deec73f80337945b1ec94482321c4c7fa914e69e670f8")
+        const data=services.TestGetResource("data/tx/pk/36e176ad58fad39b0b0deec73f80337945b1ec94482321c4c7fa914e69e670f8")
         data.then(res=>setTransactions(res.items))
         data.then(res=>console.log(res))
     },[])
