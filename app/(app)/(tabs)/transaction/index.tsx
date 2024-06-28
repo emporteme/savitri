@@ -1,23 +1,22 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import {Services} from "@/services/Services";
 
-const transactions = [
-    { id: 'CC00c479', sender: '41abb4...2b0e2c', type: 'sc for buying tokens', timestamp: '5 seconds ago' },
-    { id: 'CC00a117', sender: '41abb4...2b0e2c', type: 'sc for buying tokens', timestamp: '1 minute ago' },
-    { id: 'CC00e123', sender: '41abb4...2b0e2c', type: 'sc for buying tokens', timestamp: '3 minutes ago' },
-    { id: 'CC00e9f1', sender: '41abb4...2b0e2c', type: 'sc for buying tokens', timestamp: '10 minutes ago' },
-    { id: 'CC00e434', sender: '41abb4...2b0e2c', type: 'sc for buying tokens', timestamp: '15 minutes ago' },
-    { id: 'CC00190', sender: '41abb4...2b0e2c', type: 'sc for buying tokens', timestamp: '20 minutes ago' },
-    { id: 'CC00b32', sender: '41abb4...2b0e2c', type: 'sc for buying tokens', timestamp: '30 minutes ago' },
-    { id: 'CC005a53', sender: '41abb4...2b0e2c', type: 'sc for buying tokens', timestamp: '1 hour ago' },
-    // Add more transactions as needed
-];
 
 const Transaction: React.FC = () => {
+    const [transactions, setTransactions]:any = React.useState();
+    useEffect(()=>{
+        const services =new Services()
+        const data=services.GetResource("data/tx/pk/36e176ad58fad39b0b0deec73f80337945b1ec94482321c4c7fa914e69e670f8")
+        data.then(res=>setTransactions(res.items))
+        data.then(res=>console.log(res))
+    },[])
+
     return (
         <ScrollView style={styles.container}>
-            {transactions.map((transaction) => (
-                <View key={transaction.id} style={styles.transactionContainer}>
+            {transactions ? (<View>
+                {transactions.map((transaction:any,key:number) => (
+                <View key={key} style={styles.transactionContainer}>
                     <View style={styles.transactionDetail}>
                         <Text style={styles.transactionTextBold}>{transaction.id}</Text>
                         <Text style={styles.transactionText}>{transaction.timestamp}</Text>
@@ -27,7 +26,8 @@ const Transaction: React.FC = () => {
                         <Text style={styles.transactionText}>Type: {transaction.type}</Text>
                     </View>
                 </View>
-            ))}
+            ))}</View>):(<Text>loading...</Text>)}
+
         </ScrollView>
     );
 };
