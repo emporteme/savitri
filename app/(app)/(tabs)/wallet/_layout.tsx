@@ -12,6 +12,8 @@ export default () => {
                 }
             }
         >
+            <Stack.Screen name="seedPhrase" options={{ headerShown: false }} />
+            <Stack.Screen name="createWallet" options={{ headerShown: false }} />
         </Stack>
     )
 }
