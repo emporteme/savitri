@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import {Services} from "@/services/Services";
 
 
-const Transaction: React.FC = () => {
+const History: React.FC = () => {
     const [transactions, setTransactions]:any = React.useState();
     useEffect(()=>{
         const services =new Services()
@@ -66,4 +66,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Transaction;
+export default History;

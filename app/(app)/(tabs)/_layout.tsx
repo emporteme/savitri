@@ -1,68 +1,65 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import { View, StyleSheet } from 'react-native';
+import { Tabs } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import CustomTabBarLabel from '@/components/navigation/CustomTabBarLabel'; // Make sure the path is correct
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+    const colorScheme = useColorScheme();
+    const tintColor = Colors[colorScheme ?? 'light'].tint;
 
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: { height: 60 }
-      }} >
-      <Tabs.Screen
-        name="wallet"
-        options={{
-          title: 'Wallet',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'wallet' : 'wallet-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="transaction"
-        options={{
-          title: 'Transactions',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'time' : 'time-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="modal"
-        options={{
-          title: 'Modal',
-          tabBarIcon: ({ color, focused }) => (
-            <View style={{ backgroundColor: '#6B96FE', borderRadius: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36 }}>
-              <TabBarIcon name={focused ? 'swap-vertical' : 'swap-vertical-outline'} color={'#fff'} />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'compass' : 'compass-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="setting"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'settings' : 'settings-outline'} color={color} />
-          ),
-        }}
-      />
-    </ Tabs>
-  );
+    return (
+        <Tabs
+            screenOptions={{
+                tabBarActiveTintColor: tintColor,
+                headerShown: false,
+                tabBarStyle: { height: 60 },
+                tabBarShowLabel: false,
+            }}
+        >
+            <Tabs.Screen
+                name="wallet"
+                options={{
+                    title: 'wallet',
+                    tabBarIcon: ({ color, focused }) => (
+                        <CustomTabBarLabel name={focused ? 'wallet' : 'wallet-outline'} title="Wallet" color={color} focused={focused} />
+                    ),
+                }}
+            />
+
+            <Tabs.Screen
+                name="transactions"
+                options={{
+                    title: 'transactions',
+                    tabBarIcon: ({ color, focused }) => (
+                        <CustomTabBarLabel name={focused ? 'swap-horizontal' : 'swap-horizontal-outline'} title="transaction" color={color} focused={focused} />
+                    ),
+                }}
+            />
+
+            <Tabs.Screen
+                name="history"
+                options={{
+                    title: 'history',
+                    tabBarIcon: ({ color, focused }) => (
+                        <CustomTabBarLabel name={focused ? 'time' : 'time-outline'} title="History" color={color} focused={focused} />
+                    ),
+                }}
+            />
+
+        </Tabs>
+    );
 }
+
+const styles = StyleSheet.create({
+    modalIcon: {
+        backgroundColor: '#6B96FE',
+        borderRadius: 80,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 36,
+        height: 36,
+    },
+});

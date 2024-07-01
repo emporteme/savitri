@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Platform, View, Text, SafeAreaView } from 'react-native';
-import {Link, Stack} from 'expo-router';
+import {Image, StyleSheet, Platform, View, Text, SafeAreaView, Pressable} from 'react-native';
+import {Link, router, Stack} from 'expo-router';
 import { WalletList, TabViews } from '@/components/pages/wallet';
 
 export default function WalletScreen() {
@@ -7,7 +7,7 @@ export default function WalletScreen() {
     <View style={{ flex: 1, padding: 16, gap: 16 }}>
     <WalletList />
       <TabViews />
-        <Link href={"wallet/seedPhrase"}><Text>1</Text></Link>
+        <Pressable onPress={()=>router.push("wallet/seedPhrase")}><Text>1</Text></Pressable>
     </View>
   );
 }
