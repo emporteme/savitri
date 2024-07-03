@@ -6,7 +6,7 @@ export default () => {
             screenOptions={
                 {
                     headerShown: false,
-                    headerShadowVisible: true,
+                    headerShadowVisible: false,
                     title: 'Wallet',
                     headerTitleAlign: 'center'
                 }

@@ -1,19 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Make sure to install the vector icons library
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import WalletBack from "@/components/walletBack";
 
-
-
-const seedPhrases = [
-    'east', 'sick', 'majority', 'multiply', 'bark', 'utter',
-    'remedy', 'pupil', 'peel', 'password', 'father', 'wrist'
-];
+// Function to fetch a random word from an API
+const getRandomWord = async () => {
+    try {
+        const response = await fetch('https://random-word-api.herokuapp.com/word?number=12');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching random words:', error);
+        return [];
+    }
+};
 
 export default function SeedPhrase() {
-
+    const [seedPhrases, setSeedPhrases] = useState([]);
     const navigate = useRouter();
+
+    useEffect(() => {
+        generateSeedPhrases();
+    }, []);
+
+    const generateSeedPhrases = async () => {
+        const words = await getRandomWord();
+        setSeedPhrases(words);
+    };
 
     const copyToClipboard = () => {
         navigate.push('/wallet/createWallet');
@@ -41,6 +54,7 @@ export default function SeedPhrase() {
         </View>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -88,6 +102,7 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderRadius: 8,
         alignItems: 'center',
+        marginBottom: 12,
     },
     buttonText: {
         color: '#ffffff',

@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f3f3f3',
         borderRadius: 8,
         paddingHorizontal: 12,
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
     },
     button: {
         backgroundColor: '#a259ff',
