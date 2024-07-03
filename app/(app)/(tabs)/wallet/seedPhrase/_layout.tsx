@@ -7,7 +7,7 @@ export default () => {
                 {
                     headerShown: true,
                     headerShadowVisible: true,
-                    title: 'Explore',
+                    title: 'SeedPhrase',
                     headerTitleAlign: 'center'
                 }
             }

@@ -7,7 +7,7 @@ export default () => {
                 {
                     headerShown: true,
                     headerShadowVisible: true,
-                    title: 'Settings',
+                    title: 'Transaction',
                     headerTitleAlign: 'center'
                 }
             }

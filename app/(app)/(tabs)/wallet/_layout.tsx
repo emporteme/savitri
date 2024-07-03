@@ -5,13 +5,14 @@ export default () => {
         <Stack
             screenOptions={
                 {
-                    headerShown: true,
+                    headerShown: false,
                     headerShadowVisible: true,
                     title: 'Wallet',
                     headerTitleAlign: 'center'
                 }
             }
         >
+            <Stack.Screen name={"seedPhrase"}></Stack.Screen>
         </Stack>
     )
 }

@@ -7,7 +7,7 @@ export default () => {
                 {
                     headerShown: true,
                     headerShadowVisible: true,
-                    title: 'Modal',
+                    title: 'History',
                     headerTitleAlign: 'center'
                 }
             }
