@@ -36,6 +36,8 @@
     "expo-system-ui": "~3.0.6",
     "expo-web-browser": "~13.0.3",
     "location": "^0.0.1",
+    "moment": "^2.30.1",
+    "moment-duration-format": "^2.3.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.2",
