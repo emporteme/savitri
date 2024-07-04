@@ -30,6 +30,7 @@ export default function RootLayout() {
     mLight: require("../../assets/fonts/Poppins-Light.ttf"),
     mELight: require("../../assets/fonts/Poppins-ExtraLight.ttf"),
     mThin: require("../../assets/fonts/Poppins-Thin.ttf"),
+    ionicons: require("@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf"),
   });
 
   useEffect(() => {
