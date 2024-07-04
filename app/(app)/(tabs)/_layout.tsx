@@ -6,16 +6,15 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import CustomTabBarLabel from '@/components/navigation/CustomTabBarLabel'; // Make sure the path is correct
 
 export default function TabLayout() {
-    const colorScheme = useColorScheme();
-    const tintColor = Colors[colorScheme ?? 'light'].tint;
+    const tintColor = '#9E3FFE';
 
     return (
         <Tabs
             screenOptions={{
                 tabBarActiveTintColor: tintColor,
                 headerShown: false,
-                tabBarShowLabel:false,
-                tabBarStyle: { height: 60 },
+                tabBarShowLabel: false,
+                tabBarStyle: { height: 70 },
             }}
         >
             <Tabs.Screen
