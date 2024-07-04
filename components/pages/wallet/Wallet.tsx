@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, Alert, Button, FlatList, ScrollView } from 'react-native';
+import {
+    View,
+    Text,
+    Pressable,
+    Alert,
+    FlatList,
+    ScrollView,
+    TouchableOpacity,
+    StyleSheet,
+    Dimensions,
+    Image
+} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as SecureStore from 'expo-secure-store';
 import elliptic, { eddsa as EdDSA } from 'elliptic';
 import { ethers } from 'ethers';
 import * as Crypto from 'expo-crypto';
-import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
+import * as Clipboard from 'expo-clipboard';
 
 const Wallet: React.FC = () => {
     const [wallets, setWallets] = useState<{ type: string, publicKey: string, privateKey: string }[]>([]);
@@ -48,45 +59,114 @@ const Wallet: React.FC = () => {
     };
 
     const renderWalletItem = ({ item }: { item: { type: string, publicKey: string, privateKey: string } }) => (
-        <View style={{ display: 'flex', flexDirection: 'column', padding: 16, borderWidth: 1, borderColor: 'gray', borderRadius: 8, marginBottom: 16 }}>
-            <View style={{ paddingBottom: 16, borderBottomWidth: 1, borderColor: 'gray', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 16 }}>
-                    <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'violet' }}></View>
-                    <Text style={{ fontWeight: '500', fontSize: 18 }}>{item.type} Wallet</Text>
+        <View style={styles.walletCard}>
+            <View style={styles.walletHeader}>
+                <View style={styles.walletIconContainer}>
+                    <Image source={require('./img/savitri.png')} style={styles.savitriIcon}/>
                 </View>
                 <View>
-                    <Ionicons name="chevron-down-outline" size={24} color="black" />
+                    <Text style={styles.walletTitle}>Savitri wallet</Text>
+                    <View style={styles.walletDetails}>
+                        <Text style={styles.walletAddress}>{item.publicKey.slice(0, 6)}...{item.publicKey.slice(-4)}</Text>
+                        <Pressable onPress={() => handleCopyAddress(item.publicKey)}>
+                            <Ionicons name="copy" size={16} color="#6B96FE" />
+                        </Pressable>
+                    </View>
                 </View>
             </View>
-            <View style={{ paddingTop: 16, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 16 }}>
-                    <Text style={{ fontWeight: '600' }}>Address:</Text>
-                    <Pressable
-                        style={{ borderRadius: 20, backgroundColor: '#6B96FE20', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, padding: 8 }}
-                        onPress={() => handleCopyAddress(item.publicKey)}
-                    >
-                        <Text style={{ color: '#6B96FE' }}>{item.publicKey.slice(0, 6)}...{item.publicKey.slice(-4)}</Text>
-                        <Ionicons name="copy" size={16} color="#6B96FE" />
-                    </Pressable>
-                </View>
-                <View>
-                    <Ionicons name="ellipsis-horizontal" size={24} color="black" />
-                </View>
-            </View>
+
+            <Text style={styles.walletBalance}>$32,324.36</Text>
         </View>
     );
 
     return (
-        <ScrollView style={{ padding: 16, height: '50%', gap: 12, display: 'flex', flexDirection: 'column' }}>
-            <Button title="Create Ikarus Wallet" onPress={() => navigate.push("/wallet/seedPhrase")} />
-            <Button title="Create Ethereum Wallet" onPress={createEthereumWallet} />
+        <ScrollView horizontal={true} style={{ padding: 16, height: '50%' }}>
             <FlatList
                 data={wallets}
                 renderItem={renderWalletItem}
                 keyExtractor={(item, index) => index.toString()}
+                horizontal
             />
+            <View style={styles.createWalletContainer}>
+                <TouchableOpacity onPress={() => navigate.push("wallet/seedPhrase")}>
+                    <View style={styles.createWallet}>
+                        <Text style={styles.plusSign}>+</Text>
+                        <Text style={styles.createWalletText}>Add wallet</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
         </ScrollView>
     );
 };
+
+const styles = StyleSheet.create({
+    createWalletContainer: {
+        justifyContent: 'center',
+        alignSelf: 'center',
+        backgroundColor: '#FCE8FF',
+        width: 335,
+        borderRadius: 16,
+        marginRight: 16,
+    },
+    createWallet: {
+        width: '100%',
+        height: 138,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    plusSign: {
+        borderRadius: 90,
+        fontSize: 24,
+        color: '#9E3FFE',
+        backgroundColor: "#F1E4FF",
+        paddingHorizontal: 8,
+        paddingBottom: 4,
+        marginRight: 8,
+    },
+    createWalletText: {
+        color: '#9E3FFE',
+        fontSize: 18,
+    },
+    walletCard: {
+        backgroundColor: '#FCE8FF',
+        borderRadius: 16,
+        padding: 16,
+        marginRight: 16,
+        width:335,
+        height:138
+    },
+    walletHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    walletIconContainer: {
+        marginRight: 8,
+
+    },
+    savitriIcon:{
+        width:40,
+        height:35.7
+    },
+    walletTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    walletDetails: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 4,
+    },
+    walletAddress: {
+        color: '#6B96FE',
+    },
+    walletBalance: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#9E3FFE',
+    },
+});
 
 export default Wallet;
