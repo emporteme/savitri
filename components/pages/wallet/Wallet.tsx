@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import elliptic, { eddsa as EdDSA } from 'elliptic';
 import { ethers } from 'ethers';
 import * as Crypto from 'expo-crypto';
+import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 
 const Wallet: React.FC = () => {
@@ -41,8 +42,9 @@ const Wallet: React.FC = () => {
         }
     };
 
-    const handleCopyAddress = (publicKey: string) => {
-        Alert.alert('Public Key', publicKey);
+    const handleCopyAddress = async (publicKey: string) => {
+        await Clipboard.setStringAsync(publicKey);
+        Alert.alert('Public Key', `Copied to clipboard: ${publicKey}`);
     };
 
     const renderWalletItem = ({ item }: { item: { type: string, publicKey: string, privateKey: string } }) => (
