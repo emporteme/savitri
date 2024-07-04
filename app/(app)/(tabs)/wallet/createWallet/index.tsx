@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import WalletBack from "@/components/walletBack";
@@ -16,7 +16,9 @@ export default function CreateWallet() {
     const ec = new EdDSA('ed25519');
     const navigate = useRouter();
 
-    const isFormValid = seedPhrase && password && confirmPassword && password === confirmPassword;
+    useEffect(() => {
+        loadKeys();
+    }, []);
 
     const loadKeys = async () => {
         const keys = await SecureStore.getItemAsync('wallets');
@@ -24,6 +26,8 @@ export default function CreateWallet() {
             setWallets(JSON.parse(keys));
         }
     };
+
+    const isFormValid = seedPhrase && password && confirmPassword && password === confirmPassword;
 
     const createIkarusWallet = async () => {
         let secret: any;
