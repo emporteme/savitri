@@ -4,7 +4,7 @@ import Wallet from './Wallet'
 
 const WalletList: React.FC = () => {
     return (
-        <ScrollView style={{ height: '0%' }}>
+        <ScrollView style={{ height: '0%' ,flexGrow:1}}>
             <Wallet />
         </ScrollView>
     )

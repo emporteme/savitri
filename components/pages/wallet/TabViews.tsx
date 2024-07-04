@@ -33,11 +33,12 @@ const TabViews: React.FC = () => {
                 renderScene={renderScene}
                 onIndexChange={setIndex}
                 initialLayout={{ width: layout.width }}
+                style={{flexGrow:3.1}}
                 renderTabBar={props => (
                     <TabBar
                         {...props}
                         renderLabel={({ focused, route }) => (
-                            <View style={[focused ? styles.focusedTab : styles.defaultTab, { width: screenWidth / routes.length }]}>
+                            <View style={[focused ? styles.focusedTab : styles.defaultTab, { width: (screenWidth / routes.length) -15}]}>
                                 <View style={focused ? styles.focusedTab : styles.defaultTab}>
                                     <Text
                                         style={{
@@ -67,14 +68,16 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingVertical: 8,
         paddingHorizontal: 16,
-        alignItems:"center"
+        alignItems:"center",
+
     },
     defaultTab: {
         width:"100%",
         backgroundColor: 'transparent',
         paddingVertical: 8,
         paddingHorizontal: 16,
-        alignItems:"center"
+        alignItems:"center",
+        borderRadius: 8,
     },
     indicatorStyle: {
         backgroundColor: 'transparent',
