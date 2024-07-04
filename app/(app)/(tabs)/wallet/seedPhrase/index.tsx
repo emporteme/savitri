@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import WalletBack from "@/components/walletBack";
+import * as Clipboard from 'expo-clipboard';
 
 // Function to fetch a random word from an API
 const getRandomWord = async () => {
@@ -28,7 +29,9 @@ export default function SeedPhrase() {
         setSeedPhrases(words);
     };
 
-    const copyToClipboard = () => {
+    const copyToClipboard = async () => {
+        const seedPhraseString = seedPhrases.join(' ');
+        await Clipboard.setStringAsync(seedPhraseString);
         navigate.push('/wallet/createWallet');
     };
 
