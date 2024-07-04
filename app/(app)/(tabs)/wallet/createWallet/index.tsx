@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from "expo-router";
-import {placeholder} from "@babel/types";
 import WalletBack from "@/components/walletBack";
-
-
+import * as SecureStore from 'expo-secure-store';
+import elliptic, { eddsa as EdDSA } from 'elliptic';
+import { useRouter } from 'expo-router';
 
 export default function CreateWallet() {
     const [seedPhrase, setSeedPhrase] = useState('');
@@ -13,14 +12,63 @@ export default function CreateWallet() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [wallets, setWallets] = useState<{ type: string, publicKey: string, privateKey: string }[]>([]);
+    const ec = new EdDSA('ed25519');
+    const navigate = useRouter();
 
     const isFormValid = seedPhrase && password && confirmPassword && password === confirmPassword;
 
+    const loadKeys = async () => {
+        const keys = await SecureStore.getItemAsync('wallets');
+        if (keys) {
+            setWallets(JSON.parse(keys));
+        }
+    };
 
+    const createIkarusWallet = async () => {
+        let secret: any;
 
-    const handleCreateWallet = () => {
+        if (window.crypto && window.crypto.getRandomValues) {
+            secret = new Uint8Array(32);
+            window.crypto.getRandomValues(secret);
+        } else {
+            console.warn('Warning: Using insecure methods to generate private key');
+            secret = [];
+            for (let i = 0; i < 32; i++) {
+                secret.push(Math.floor(Math.random() * 256));
+            }
+        }
+
+        const key = ec.keyFromSecret(secret);
+        const privateKeyHex = key.getSecret('hex');
+        const publicKeyHex = key.getPublic('hex');
+
+        const newWallet = { type: 'Ikarus', publicKey: publicKeyHex, privateKey: privateKeyHex };
+        const updatedWallets = [...wallets, newWallet];
+        await SecureStore.setItemAsync('wallets', JSON.stringify(updatedWallets));
+
+        setWallets(updatedWallets);
+        requestTokens(publicKeyHex);
+    };
+
+    const requestTokens = async (publicKey: string) => {
+        try {
+            const url = `https://masternode-test.ikarusway.com/wallet/${publicKey}`;
+            const response = await fetch(url);
+            if (response.status === 200) {
+                Alert.alert('Success', '100 tokens have been transferred to your wallet.');
+                navigate.push('/wallet');
+            } else {
+                console.error(`Error: ${response.status} - ${response.statusText}`);
+            }
+        } catch (error) {
+            console.error(`Error: ${error}`);
+        }
+    };
+
+    const handleCreateWallet = async () => {
         if (isFormValid) {
-
+            await createIkarusWallet();
             console.log('Wallet created');
         }
     };
@@ -33,15 +81,15 @@ export default function CreateWallet() {
             <Text style={styles.title}>Protect your wallet</Text>
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Seed phrase</Text>
-                    <TextInput
-                        style={styles.inputSeed}
-                        placeholder="Paste your seed phrase"
-                        value={seedPhrase}
-                        onChangeText={setSeedPhrase}
-                        multiline
-                        textAlign={"center"}
-                        placeholderTextColor={"#ABABAB"}
-                    />
+                <TextInput
+                    style={styles.inputSeed}
+                    placeholder="Paste your seed phrase"
+                    value={seedPhrase}
+                    onChangeText={setSeedPhrase}
+                    multiline
+                    textAlign={"center"}
+                    placeholderTextColor={"#ABABAB"}
+                />
             </View>
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Password</Text>
@@ -152,5 +200,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
-
