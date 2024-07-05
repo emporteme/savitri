@@ -35,8 +35,8 @@ const History: React.FC = () => {
 
         if (keys) {
             const key: TransactionItem[] = [];
-            for (const wallet of [1]) {
-                const data = await services.TestGetResource(`data/tx/pk/36e176ad58fad39b0b0deec73f80337945b1ec94482321c4c7fa914e69e670f8`);
+            for (const wallet of JSON.parse(keys)) {
+                const data = await services.TestGetResource(`data/tx/pk/${wallet.publicKey}`);
                 if (data.total > 0) {
                     for (const j in data.items) {
                         key.push(data.items[j]);
