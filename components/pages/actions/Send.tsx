@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
+import {StyleSheet, Text, View, TextInput, Alert, TouchableOpacity, Modal} from 'react-native';
 import * as Location from 'expo-location';
 import elliptic, { eddsa as EdDSA } from 'elliptic';
-import { hexToUint8Array } from '@/components/utils';
 import * as SecureStore from 'expo-secure-store';
+import WalletList from "@/components/pages/wallet/WalletList";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const ec = new EdDSA('ed25519');
 
@@ -32,6 +33,7 @@ export default function AppSend() {
     const [location, setLocation] = useState<any>(null);
     const [recipientAddress, setRecipientAddress] = useState<string>('');
     const [amountToSend, setAmountToSend] = useState<string>('');
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         const initializeApp = async () => {
@@ -385,24 +387,61 @@ export default function AppSend() {
         }
     };
 
+    const handleSend = () => {
+        // Здесь можно добавить логику для отправки
+        // После успешной отправки откроем модальное окно
+        setModalVisible(true);
+    };
+
     return (
         <View style={styles.container}>
-            {/* <Text>Current Location: {JSON.stringify(location)}</Text> */}
-            <TextInput
-                style={styles.input}
-                placeholder="Recipient Address"
-                value={recipientAddress}
-                onChangeText={setRecipientAddress}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Amount to Send"
-                value={amountToSend}
-                onChangeText={setAmountToSend}
-                keyboardType="numeric"
-            />
-            <Button title="Send Tokens" onPress={handleSendTokens} />
-            <Button title="Test sending" onPress={() => sendTokensTest()} />
+            <WalletList />
+            <View style={styles.inputContainer}>
+                <Text style={styles.label}>Recipient's address</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Enter address"
+                    value={recipientAddress}
+                    onChangeText={setRecipientAddress}
+                />
+
+                <Text style={styles.label}>Amount to send</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Enter amount"
+                    value={amountToSend}
+                    onChangeText={setAmountToSend}
+                    keyboardType="numeric"
+                />
+            </View>
+            <TouchableOpacity
+                style={[styles.button, (!recipientAddress || !amountToSend) && styles.buttonDisabled]}
+                onPress={handleSend}
+                disabled={!recipientAddress || !amountToSend}
+            >
+                <Text style={styles.buttonText}>Send tokens</Text>
+            </TouchableOpacity>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalView}>
+                        <View style={styles.modalContainerHead}>
+                            <Text style={styles.modalText}>Success</Text>
+                            <TouchableOpacity style={styles.modalText} onPress={() => setModalVisible(!modalVisible)}><Ionicons name={"close-outline"} size={24}/></TouchableOpacity>
+                        </View>
+                        <View>
+                            <Ionicons name={"checkmark-circle-outline"} size={40} color="#4AAC30" style={styles.succesIcon}/>
+                            <Text style={styles.succesText}>Tokens have been sent successfully</Text>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -410,18 +449,119 @@ export default function AppSend() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
         justifyContent: 'center',
         padding: 16,
-        gap: 12
+        backgroundColor: '#ffffff',
+        fontFamily:"Montserrat"
+    },
+    label: {
+        fontSize: 16,
+        color: '#333333',
+        marginBottom: 8,
+    },
+    modalContainerHead:{
+      display: 'flex',
+      flexDirection: 'row',
+      width:"100%",
+      paddingHorizontal:16,
+      justifyContent:"space-between",
+      borderBottomColor:"#E8E6E6",
+      borderBottomWidth:1,
+      borderStyle:"solid"
+    },
+    inputContainer:{
+        marginTop:40,
+        flexGrow:2
+    },
+    succesIcon: {
+        marginTop: 8,
+        alignSelf: 'center',
+    },
+    succesText:{
+        marginTop: 12,
+        textAlign:'center',
+    },
+    walletCard: {
+        backgroundColor: '#f5e8ff',
+        borderRadius: 8,
+        padding: 16,
+        marginBottom: 24,
+        alignItems: 'center',
+    },
+    walletText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333333',
+    },
+    walletAddress: {
+        fontSize: 14,
+        color: '#666666',
+        marginBottom: 8,
+    },
+    walletBalance: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333333',
     },
     input: {
-        height: 40,
-        borderColor: 'gray',
+        height: 48,
+        borderColor: '#ddd',
         borderWidth: 1,
-        marginBottom: 12,
-        width: '100%',
-        paddingHorizontal: 8,
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        marginBottom: 16,
+        backgroundColor: '#fff',
+    },
+    button: {
+        marginBottom:18,
+        backgroundColor: '#6200ee',
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    buttonDisabled: {
+        backgroundColor: '#b3b3b3',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    modalBackground: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(31, 30, 35, 0.3)',
+    },
+    modalView: {
+        width: 335,
+        height: 153,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: 'bold',
+
+    },
+    buttonClose: {
+        backgroundColor: '#6200ee',
+        marginTop: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
     },
 });
