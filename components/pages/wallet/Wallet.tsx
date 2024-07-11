@@ -18,13 +18,17 @@ import { ethers } from 'ethers';
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
+import {Services} from "@/services/services";
 
 const Wallet: React.FC = () => {
     const [wallets, setWallets] = useState<{ type: string, publicKey: string, privateKey: string }[]>([]);
+    const [ballance, setBallance] = useState<number>(0);
     const ec = new EdDSA('ed25519');
     const navigate = useRouter();
+    const services = new Services();
 
     useEffect(() => {
+
         loadKeys();
     }, []);
 
@@ -33,6 +37,8 @@ const Wallet: React.FC = () => {
         if (keys) {
             setWallets(JSON.parse(keys));
         }
+        services.TestGetResource(`data/ledger/e61efc8551c27314497605e4ed36b12e30637c075132509fb566f08ecd09d84c`)
+            .then(res=>setBallance(res.balance))
     };
 
     const createEthereumWallet = async () => {
@@ -75,7 +81,7 @@ const Wallet: React.FC = () => {
                 </View>
             </View>
 
-            <Text style={styles.walletBalance}>$32,324.36</Text>
+            <Text style={styles.walletBalance}>${ballance}</Text>
         </View>
     );
 

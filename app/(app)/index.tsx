@@ -1,8 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import {Link} from "expo-router";
+import { useRouter } from 'expo-router';
 
 export default function App() {
+    const navigate = useRouter();
+
+    // Redirect to the wallet page
+    React.useEffect(() => {
+        navigate.push('/wallet');
+    }, [navigate]);
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Welcome to Savitri</Text>
